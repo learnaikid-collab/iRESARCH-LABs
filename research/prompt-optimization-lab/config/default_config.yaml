@@ -1,0 +1,220 @@
+# Default Configuration for Prompt Optimization System
+
+# LLM Configuration
+llm:
+  model: "gemini-2.5-pro"  # or "gpt-4", "claude-3-opus", etc.
+  api_key_env: "GEMINI_API_KEY"  # Environment variable name
+  temperature: 0.7
+  max_tokens: 2048
+  top_p: 0.95
+  frequency_penalty: 0.0
+  presence_penalty: 0.0
+  
+  # Fallback models
+  fallback_models:
+    - "gpt-4-turbo"
+    - "claude-3-sonnet"
+  
+  # Rate limiting
+  max_requests_per_minute: 60
+  retry_attempts: 3
+  retry_delay: 2  # seconds
+
+# Optimization Configuration
+optimization:
+  # Strategy selection: 'auto', 'fast', 'thorough', 'aggressive'
+  default_strategy: "auto"
+  
+  # Maximum iterations for optimization loop
+  max_iterations: 10
+  
+  # Convergence threshold (stop if improvement < threshold)
+  convergence_threshold: 0.01
+  
+  # Early stopping (stop after N iterations without improvement)
+  early_stopping_patience: 3
+  
+  # Enable different optimization algorithms
+  algorithms:
+    mesa_optimization: true
+    rl_optimization: true
+    evolutionary: true
+    self_critique: true
+    multi_objective: false  # Expensive, use when needed
+  
+  # Algorithm-specific settings
+  mesa:
+    beam_width: 5
+    search_strategy: "beam_search"  # or "evolutionary", "gradient_free"
+  
+  rl:
+    learning_rate: 0.0001
+    n_episodes: 100
+    discount_factor: 0.99
+  
+  evolutionary:
+    population_size: 20
+    n_generations: 10
+    mutation_rate: 0.3
+    crossover_rate: 0.5
+  
+  self_critique:
+    max_refinement_iterations: 5
+    critique_temperature: 0.8
+  
+  multi_objective:
+    strategy: "pareto"  # or "weighted", "lexicographic"
+    objectives:
+      - name: "accuracy"
+        weight: 0.5
+      - name: "brevity"
+        weight: 0.2
+      - name: "clarity"
+        weight: 0.3
+
+# Knowledge and RAG Configuration
+knowledge:
+  # Enable web search
+  web_search_enabled: true
+  web_search_provider: "google"  # or "bing", "duckduckgo"
+  web_search_api_key_env: "GOOGLE_SEARCH_API_KEY"
+  max_search_results: 5
+  
+  # RAG settings
+  rag_enabled: true
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  vector_store: "faiss"  # or "chromadb", "pinecone"
+  top_k_documents: 5
+  
+  # Document processing
+  max_doc_length: 1000  # characters
+  chunk_size: 500
+  chunk_overlap: 50
+
+# Evaluation Configuration
+evaluation:
+  # Reward model settings
+  reward_model_type: "heuristic"  # or "learned", "llm_judge"
+  
+  # Quality metrics weights
+  metrics:
+    completeness: 0.3
+    correctness: 0.3
+    coherence: 0.2
+    relevance: 0.2
+  
+  # Safety checks
+  safety_checks_enabled: true
+  content_filter_level: "medium"  # low, medium, high
+  
+  # Validation
+  validate_improvements: true
+  require_score_improvement: 0.05  # Minimum improvement to accept
+
+# Alignment Configuration
+alignment:
+  # User-centric optimization
+  user_centric: true
+  
+  # Refusal policy
+  refusal_threshold: 0.9  # How sensitive to be (0=never refuse, 1=always refuse)
+  creative_compliance: true  # Try to help even with sensitive queries
+  
+  # Interactive clarification
+  enable_clarification: true
+  clarification_threshold: 0.7  # Ask user when confidence < threshold
+  
+  # Meta alignment
+  use_constitutional_ai: true
+  constitution_principles:
+    - "Prioritize user's stated goals"
+    - "Provide accurate and helpful information"
+    - "Be transparent about limitations"
+    - "Avoid causing harm"
+
+# Resource Management
+resources:
+  # Time limits
+  max_total_time: 300  # seconds (5 minutes)
+  max_iteration_time: 30  # seconds per iteration
+  
+  # Token budgets
+  max_total_tokens: 50000
+  max_tokens_per_iteration: 5000
+  
+  # Parallelization
+  enable_parallel_evaluation: true
+  max_parallel_workers: 4
+  
+  # Caching
+  enable_caching: true
+  cache_backend: "memory"  # or "redis", "disk"
+  cache_ttl: 3600  # seconds
+
+# Logging and Monitoring
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "json"  # or "text"
+  
+  # Log destinations
+  console: true
+  file: true
+  log_file_path: "logs/prompt_optimizer.log"
+  
+  # What to log
+  log_requests: true
+  log_llm_calls: true
+  log_optimization_steps: true
+  log_evaluations: true
+  
+  # Experiment tracking
+  use_wandb: false
+  wandb_project: "prompt-optimization"
+  wandb_entity: null
+
+# Learning and Memory
+memory:
+  # Enable learning from past sessions
+  enable_learning: true
+  
+  # Storage
+  storage_backend: "sqlite"  # or "postgres", "mongodb"
+  database_path: "data/optimization_memory.db"
+  
+  # Prompt library
+  store_successful_prompts: true
+  min_success_score: 0.8
+  
+  # Meta-learning
+  enable_meta_learning: true
+  meta_learning_frequency: 100  # Update after N sessions
+
+# API Server Configuration (if running as service)
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  reload: false
+  
+  # CORS
+  enable_cors: true
+  allowed_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+  
+  # Authentication
+  require_auth: false
+  auth_token_env: "API_AUTH_TOKEN"
+  
+  # Rate limiting
+  rate_limit_enabled: true
+  rate_limit_requests: 100
+  rate_limit_window: 60  # seconds
+
+# Feature Flags
+features:
+  enable_streaming: true
+  enable_tool_use: true
+  enable_multimodal: false  # Requires compatible LLM
+  enable_interactive_mode: true
+  experimental_algorithms: false

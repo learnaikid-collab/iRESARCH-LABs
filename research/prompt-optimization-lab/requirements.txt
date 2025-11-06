@@ -1,0 +1,56 @@
+# Core dependencies
+python>=3.8
+
+# LLM APIs
+openai>=1.0.0
+anthropic>=0.7.0
+google-generativeai>=0.3.0
+
+# Machine Learning
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+
+# Optimization
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Data Processing
+pandas>=2.0.0
+pydantic>=2.0.0
+
+# Web and API
+requests>=2.31.0
+aiohttp>=3.8.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# Search and RAG
+faiss-cpu>=1.7.4
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
+tqdm>=4.65.0
+tenacity>=8.2.0
+
+# Logging and Monitoring
+loguru>=0.7.0
+wandb>=0.15.0  # Optional: for experiment tracking
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Development
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.4.0
+isort>=5.12.0
+
+# Documentation
+sphinx>=7.0.0
+sphinx-rtd-theme>=1.3.0

@@ -11,8 +11,25 @@ import logging
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 
-import google.generativeai as genai
-from tenacity import retry, stop_after_attempt, wait_exponential
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+    genai = None
+
+try:
+    from tenacity import retry, stop_after_attempt, wait_exponential
+    TENACITY_AVAILABLE = True
+except ImportError:
+    TENACITY_AVAILABLE = False
+    # Simple retry decorator fallback
+    def retry(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
+    stop_after_attempt = lambda x: None
+    wait_exponential = lambda **kwargs: None
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +81,12 @@ class LLMEngine:
             model: Model name to use
             config: Generation configuration
         """
+        if not GENAI_AVAILABLE:
+            raise ImportError(
+                "google-generativeai is not installed. "
+                "Install it with: pip install google-generativeai"
+            )
+        
         self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
         if not self.api_key:
             raise ValueError("Google API key is required. Set GOOGLE_API_KEY environment variable.")

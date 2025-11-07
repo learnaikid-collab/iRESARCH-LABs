@@ -1,0 +1,144 @@
+# Optimization Configuration
+
+# Mesa Optimization (Inner-loop reasoner)
+mesa:
+  enabled: true
+  max_iterations: 10
+  learning_rate: 0.01
+  convergence_threshold: 0.95
+  early_stopping: true
+  early_stopping_patience: 3
+  
+  # Reward model configuration
+  reward_model:
+    type: user_aligned  # user_aligned, task_specific, hybrid
+    weights:
+      quality: 0.4
+      alignment: 0.3
+      efficiency: 0.2
+      safety: 0.1
+  
+  # Optimization strategy
+  strategy:
+    exploration_rate: 0.2
+    exploitation_rate: 0.8
+    diversity_bonus: 0.1
+
+# Evolutionary Algorithm (PromptBreeder)
+evolutionary:
+  enabled: true
+  population_size: 20
+  mutation_rate: 0.2
+  crossover_rate: 0.7
+  generations: 50
+  elitism_ratio: 0.1
+  
+  # Selection methods
+  selection:
+    method: tournament  # tournament, roulette, rank
+    tournament_size: 3
+    
+  # Mutation operators
+  mutation:
+    operators:
+      - word_replacement
+      - phrase_insertion
+      - structure_modification
+      - tone_adjustment
+    weights: [0.3, 0.3, 0.2, 0.2]
+    
+  # Crossover operators
+  crossover:
+    method: uniform  # uniform, single_point, two_point
+    
+  # Diversity maintenance
+  diversity:
+    maintain: true
+    min_distance: 0.3
+    penalty_factor: 0.5
+
+# Self-Critique (PromptWizard)
+self_critique:
+  enabled: true
+  critique_rounds: 3
+  quality_threshold: 0.85
+  
+  # Critique dimensions
+  dimensions:
+    - clarity
+    - completeness
+    - relevance
+    - creativity
+    - safety
+    
+  # Self-improvement strategy
+  improvement:
+    max_refinements: 5
+    min_improvement: 0.05
+    use_examples: true
+    
+  # Meta-prompting
+  meta_prompt:
+    enable: true
+    recursion_depth: 2
+
+# Reinforcement Learning Optimizer
+reinforcement_learning:
+  enabled: false  # Advanced feature
+  algorithm: ppo  # ppo, a2c, sac
+  
+  # Training configuration
+  training:
+    episodes: 100
+    steps_per_episode: 50
+    learning_rate: 0.0003
+    discount_factor: 0.99
+    
+  # Reward shaping
+  reward:
+    sparse: false
+    normalize: true
+    clip_range: [-1.0, 1.0]
+
+# Hybrid Optimization Strategy
+hybrid:
+  enabled: true
+  strategies:
+    - mesa
+    - evolutionary
+    - self_critique
+  
+  # Strategy selection
+  selection_mode: adaptive  # adaptive, sequential, parallel
+  
+  # Adaptive weighting
+  adaptive_weights:
+    initial: [0.33, 0.33, 0.34]
+    update_frequency: 5
+    performance_window: 10
+
+# Performance tracking
+performance:
+  track_metrics: true
+  metrics:
+    - optimization_time
+    - iterations_used
+    - improvement_rate
+    - final_score
+    - convergence_speed
+  
+  # Benchmarking
+  benchmark:
+    enabled: true
+    baseline_prompts: []
+    comparison_metrics:
+      - quality
+      - efficiency
+      - user_satisfaction
+
+# General optimization settings
+general:
+  max_total_time: 300  # seconds
+  parallel_evaluations: 4
+  seed: null  # Random seed for reproducibility
+  verbose: true

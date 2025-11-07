@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APOS - Advanced Prompt Optimization System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        textarea, select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        textarea:focus, select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            background: #6c757d;
+        }
+
+        .secondary-button:hover {
+            background: #5a6268;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .status.info {
+            background: #e7f3ff;
+            color: #0066cc;
+            display: block;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .result-content {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .metadata {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .metadata-item {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            color: #666;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 APOS</h1>
+            <p>Advanced Prompt Optimization System</p>
+        </div>
+
+        <div class="main-card">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('optimize')">Optimize Prompt</button>
+                <button class="tab" onclick="switchTab('analyze')">Analyze Task</button>
+                <button class="tab" onclick="switchTab('generate')">Generate Text</button>
+            </div>
+
+            <!-- Optimize Tab -->
+            <div id="optimize-tab" class="tab-content active">
+                <div class="form-group">
+                    <label for="optimize-prompt">Enter your prompt to optimize:</label>
+                    <textarea id="optimize-prompt" placeholder="Example: Explain quantum computing to a 10-year-old..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="strategy">Optimization Strategy:</label>
+                    <select id="strategy">
+                        <option value="mesa">Mesa (Inner-loop Optimization)</option>
+                        <option value="evolutionary">Evolutionary (PromptBreeder)</option>
+                        <option value="self_critique">Self-Critique (PromptWizard)</option>
+                        <option value="hybrid">Hybrid (Combined)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="max-iterations">Max Iterations:</label>
+                    <input type="number" id="max-iterations" value="10" min="1" max="50">
+                </div>
+
+                <div class="button-group">
+                    <button onclick="optimizePrompt()">Optimize Prompt</button>
+                    <button class="secondary-button" onclick="clearOptimize()">Clear</button>
+                </div>
+
+                <div id="optimize-status" class="status"></div>
+
+                <div id="optimize-result" class="result-card">
+                    <div class="result-header">Optimized Prompt:</div>
+                    <div id="optimize-result-content" class="result-content"></div>
+                    <div id="optimize-metadata" class="metadata"></div>
+                </div>
+            </div>
+
+            <!-- Analyze Tab -->
+            <div id="analyze-tab" class="tab-content">
+                <div class="form-group">
+                    <label for="analyze-request">Enter your request to analyze:</label>
+                    <textarea id="analyze-request" placeholder="Example: Write a research paper on climate change..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="analyzeTask()">Analyze Task</button>
+                    <button class="secondary-button" onclick="clearAnalyze()">Clear</button>
+                </div>
+
+                <div id="analyze-status" class="status"></div>
+
+                <div id="analyze-result" class="result-card">
+                    <div class="result-header">Task Analysis:</div>
+                    <div id="analyze-result-content" class="result-content"></div>
+                </div>
+            </div>
+
+            <!-- Generate Tab -->
+            <div id="generate-tab" class="tab-content">
+                <div class="form-group">
+                    <label for="generate-prompt">Enter your prompt:</label>
+                    <textarea id="generate-prompt" placeholder="Example: Write a short story about..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="temperature">Temperature (0.0 - 1.0):</label>
+                    <input type="number" id="temperature" value="0.7" min="0" max="1" step="0.1">
+                </div>
+
+                <div class="button-group">
+                    <button onclick="generateText()">Generate</button>
+                    <button class="secondary-button" onclick="clearGenerate()">Clear</button>
+                </div>
+
+                <div id="generate-status" class="status"></div>
+
+                <div id="generate-result" class="result-card">
+                    <div class="result-header">Generated Text:</div>
+                    <div id="generate-result-content" class="result-content"></div>
+                    <div id="generate-metadata" class="metadata"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Advanced Prompt Optimization System v0.1.0 | <a href="/docs">API Documentation</a></p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showStatus(elementId, message, type = 'info') {
+            const status = document.getElementById(elementId);
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function hideStatus(elementId) {
+            const status = document.getElementById(elementId);
+            status.className = 'status';
+        }
+
+        async function optimizePrompt() {
+            const prompt = document.getElementById('optimize-prompt').value;
+            const strategy = document.getElementById('strategy').value;
+            const maxIterations = document.getElementById('max-iterations').value;
+
+            if (!prompt.trim()) {
+                showStatus('optimize-status', 'Please enter a prompt to optimize', 'error');
+                return;
+            }
+
+            showStatus('optimize-status', 'Optimizing prompt...', 'info');
+            document.getElementById('optimize-result').classList.remove('show');
+
+            try {
+                const response = await fetch('/api/optimize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        strategy: strategy,
+                        max_iterations: parseInt(maxIterations),
+                        enable_safety_check: true,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Optimization failed');
+                }
+
+                const data = await response.json();
+                
+                document.getElementById('optimize-result-content').textContent = data.optimized_prompt;
+                
+                const metadata = data.metadata || {};
+                document.getElementById('optimize-metadata').innerHTML = `
+                    <div class="metadata-item"><strong>Strategy:</strong> ${data.strategy}</div>
+                    ${metadata.iterations ? `<div class="metadata-item"><strong>Iterations:</strong> ${metadata.iterations}</div>` : ''}
+                    ${metadata.final_score ? `<div class="metadata-item"><strong>Score:</strong> ${metadata.final_score.toFixed(3)}</div>` : ''}
+                    ${metadata.improvement ? `<div class="metadata-item"><strong>Improvement:</strong> ${metadata.improvement.toFixed(3)}</div>` : ''}
+                `;
+                
+                document.getElementById('optimize-result').classList.add('show');
+                showStatus('optimize-status', 'Optimization complete!', 'success');
+
+            } catch (error) {
+                showStatus('optimize-status', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function analyzeTask() {
+            const request = document.getElementById('analyze-request').value;
+
+            if (!request.trim()) {
+                showStatus('analyze-status', 'Please enter a request to analyze', 'error');
+                return;
+            }
+
+            showStatus('analyze-status', 'Analyzing task...', 'info');
+            document.getElementById('analyze-result').classList.remove('show');
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        request: request,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Analysis failed');
+                }
+
+                const data = await response.json();
+                
+                document.getElementById('analyze-result-content').innerHTML = `
+                    <strong>Task Type:</strong> ${data.task_type}<br>
+                    <strong>Complexity:</strong> ${data.complexity}<br>
+                    <strong>Domain:</strong> ${data.domain}<br>
+                    <strong>Suggested Strategy:</strong> ${data.suggested_strategy}<br>
+                    <strong>Estimated Tokens:</strong> ${data.estimated_tokens}<br>
+                    <strong>Requires Research:</strong> ${data.requires_research ? 'Yes' : 'No'}<br>
+                    <strong>Requires Examples:</strong> ${data.requires_examples ? 'Yes' : 'No'}<br>
+                    <strong>Keywords:</strong> ${data.keywords.join(', ')}<br>
+                    ${data.safety_flags.blocked_topics.length > 0 ? `<br><strong style="color: red;">⚠️ Blocked Topics:</strong> ${data.safety_flags.blocked_topics.join(', ')}` : ''}
+                `;
+                
+                document.getElementById('analyze-result').classList.add('show');
+                showStatus('analyze-status', 'Analysis complete!', 'success');
+
+            } catch (error) {
+                showStatus('analyze-status', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateText() {
+            const prompt = document.getElementById('generate-prompt').value;
+            const temperature = document.getElementById('temperature').value;
+
+            if (!prompt.trim()) {
+                showStatus('generate-status', 'Please enter a prompt', 'error');
+                return;
+            }
+
+            showStatus('generate-status', 'Generating text...', 'info');
+            document.getElementById('generate-result').classList.remove('show');
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        temperature: parseFloat(temperature),
+                    }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Generation failed');
+                }
+
+                const data = await response.json();
+                
+                document.getElementById('generate-result-content').textContent = data.text;
+                document.getElementById('generate-metadata').innerHTML = `
+                    <div class="metadata-item"><strong>Model:</strong> ${data.model}</div>
+                    <div class="metadata-item"><strong>Tokens:</strong> ${data.tokens_used}</div>
+                    <div class="metadata-item"><strong>Latency:</strong> ${data.latency_ms.toFixed(2)}ms</div>
+                `;
+                
+                document.getElementById('generate-result').classList.add('show');
+                showStatus('generate-status', 'Generation complete!', 'success');
+
+            } catch (error) {
+                showStatus('generate-status', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearOptimize() {
+            document.getElementById('optimize-prompt').value = '';
+            document.getElementById('optimize-result').classList.remove('show');
+            hideStatus('optimize-status');
+        }
+
+        function clearAnalyze() {
+            document.getElementById('analyze-request').value = '';
+            document.getElementById('analyze-result').classList.remove('show');
+            hideStatus('analyze-status');
+        }
+
+        function clearGenerate() {
+            document.getElementById('generate-prompt').value = '';
+            document.getElementById('generate-result').classList.remove('show');
+            hideStatus('generate-status');
+        }
+    </script>
+</body>
+</html>
